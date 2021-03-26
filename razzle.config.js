@@ -48,4 +48,24 @@ module.exports = {
 
     return smp.wrap(config);
   },
+  modifyJestConfig({ jestConfig }) {
+    delete jestConfig.transform["^.+\\.(js|jsx|mjs|cjs|ts|tsx)$"];
+
+    jestConfig = {
+      ...jestConfig,
+      preset: "ts-jest/presets/js-with-babel",
+      moduleNameMapper: {
+        ...jestConfig.moduleNameMapper,
+        "^@/(.*)$": "<rootDir>/src/$1",
+      },
+      coverageDirectory: "<rootDir>/coverage",
+      globals: {
+        "ts-jest": {
+          babelConfig: ".babelrc",
+        },
+      },
+    };
+
+    return jestConfig;
+  },
 };
