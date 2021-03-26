@@ -10,6 +10,8 @@ export class UploadModule implements OnModuleInit {
   public constructor(private readonly uploadService: UploadService) {}
 
   public async onModuleInit() {
-    return this.uploadService.ensure();
+    if (process.env.NODE_ENV !== "test") {
+      await this.uploadService.ensure();
+    }
   }
 }

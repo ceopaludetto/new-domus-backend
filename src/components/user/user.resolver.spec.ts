@@ -1,7 +1,7 @@
-import { getRepositoryToken } from "@mikro-orm/nestjs";
-import { Test } from "@nestjs/testing";
+import type { TestingModule } from "@nestjs/testing";
 
 import { User } from "@/models";
+import { createTestModule } from "@/utils/test.utils";
 
 import { UserResolver } from "./user.resolver";
 import { UserService } from "./user.service";
@@ -9,18 +9,10 @@ import { UserService } from "./user.service";
 describe("UserResolver", () => {
   let userResolver: UserResolver;
   let userService: UserService;
+  let ref!: TestingModule;
 
   beforeEach(async () => {
-    const ref = await Test.createTestingModule({
-      providers: [
-        UserResolver,
-        UserService,
-        {
-          provide: getRepositoryToken(User),
-          useClass: User,
-        },
-      ],
-    }).compile();
+    ref = await createTestModule().compile();
 
     userResolver = ref.get<UserResolver>(UserResolver);
     userService = ref.get<UserService>(UserService);
@@ -46,4 +38,6 @@ describe("UserResolver", () => {
 
     expect(await userResolver.findUserByLogin({ login: "" })).toBe(result);
   });
+
+  afterAll(() => ref.close());
 });

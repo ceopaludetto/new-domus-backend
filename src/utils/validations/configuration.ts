@@ -6,11 +6,27 @@ const EnviromentSchema = Yup.object({
   DATABASE_TYPE: Yup.mixed<MikroORMOptions["type"]>()
     .oneOf(["mariadb", "mongo", "mysql", "postgresql", "sqlite"])
     .required(),
-  DATABASE_HOST: Yup.string().required(),
-  DATABASE_PORT: Yup.number().required(),
+  DATABASE_HOST: Yup.string().when("DATABASE_TYPE", {
+    is: "sqlite",
+    then: Yup.string(),
+    otherwise: Yup.string().required(),
+  }),
+  DATABASE_PORT: Yup.number().when("DATABASE_TYPE", {
+    is: "sqlite",
+    then: Yup.number(),
+    otherwise: Yup.number().required(),
+  }),
   DATABASE_DB: Yup.string().required(),
-  DATABASE_USERNAME: Yup.string().required(),
-  DATABASE_PASSWORD: Yup.string().required(),
+  DATABASE_USERNAME: Yup.string().when("DATABASE_TYPE", {
+    is: "sqlite",
+    then: Yup.string(),
+    otherwise: Yup.string().required(),
+  }),
+  DATABASE_PASSWORD: Yup.string().when("DATABASE_TYPE", {
+    is: "sqlite",
+    then: Yup.string(),
+    otherwise: Yup.string().required(),
+  }),
   DATABASE_LOGGER: Yup.bool(),
 
   QUEUE_HOST: Yup.string().required(),
