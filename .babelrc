@@ -1,0 +1,12 @@
+{
+  "plugins": ["lodash"],
+  "presets": [
+    [
+      "razzle/babel",
+      {
+        "preset-react": false,
+        "preset-typescript": false
+      }
+    ]
+  ]
+}

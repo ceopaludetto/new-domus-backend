@@ -1,0 +1,11 @@
+export { Block } from "./block.model";
+export { City } from "./city.model";
+export { Condominium } from "./condominium.model";
+export { Local } from "./local.model";
+export { Person } from "./person.model";
+export { Phone } from "./phone.model";
+export { State } from "./state.model";
+export { User } from "./user.model";
+export { Address } from "./address.model";
+export { BaseModel } from "./base.model";
+export { Rule } from "./rule.model";

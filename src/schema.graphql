@@ -1,0 +1,282 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type State {
+  id: ID!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  name: String!
+  initials: String!
+  code: Float!
+  cities: [City!]!
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
+type City {
+  id: ID!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  name: String!
+  code: Float!
+  slug: String!
+  state: State!
+  addresses: [Address!]!
+}
+
+type Address {
+  id: ID!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  zip: String!
+  address: String!
+  number: String!
+  condominium: Condominium!
+  city: City!
+}
+
+type Local {
+  id: ID!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  name: String!
+  description: String
+  capacity: Float!
+  image: String
+  block: Block
+  condominium: Condominium!
+}
+
+type Phone {
+  id: ID!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  ddd: String!
+  number: String!
+  person: Person!
+}
+
+type User {
+  id: ID!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  login: String!
+  person: Person!
+}
+
+type Person {
+  id: ID!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  name: String!
+  lastName: String!
+  email: String!
+  gender: Gender!
+  cpf: String!
+  color: String!
+  birthdate: DateTime!
+  phones: [Phone!]!
+  user: User!
+  condominiums: [Condominium!]!
+}
+
+enum Gender {
+  M
+  F
+  N
+}
+
+type Rule {
+  id: ID!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  description: String!
+  condominium: Condominium!
+}
+
+type Condominium {
+  id: ID!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  companyName: String!
+  cnpj: String!
+  character: String!
+  blocks: [Block!]!
+  rules: [Rule!]!
+  locals: [Local!]!
+  address: Address!
+  people: [Person!]!
+}
+
+type Block {
+  id: ID!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  name: String!
+  number: Float!
+  image: String
+  condominium: Condominium!
+  locals: [Local!]
+}
+
+type Query {
+  showUsers(sort: UserSortInput, take: Int, skip: Int = 0): [User!]!
+  findUserByID(id: ID!): User!
+  findUserByLogin(login: String!): User!
+  showPeople(take: Int, skip: Int = 0): [Person!]!
+  findPersonByID(id: ID!): Person!
+  profile: User!
+  showCondominiums(take: Int, skip: Int = 0): [Condominium!]!
+  findCondominiumByID(id: ID!): Condominium!
+  currentCondominium: Condominium!
+  showStates(sort: StateSortInput, take: Int, skip: Int = 0): [State!]!
+  findStateByID(id: ID!): State!
+  showCities(sort: CitySortInput, take: Int, skip: Int = 0): [City!]!
+  findCityByID(id: ID!): City!
+  findCitiesByStateID(id: ID!): [City!]!
+  showBlocks(take: Int, skip: Int = 0): [Block!]!
+  findBlockByID(id: ID!): Block!
+}
+
+input UserSortInput {
+  login: Order
+}
+
+enum Order {
+  ASC
+  ASC_NULLS_LAST
+  ASC_NULLS_FIRST
+  DESC
+  DESC_NULLS_LAST
+  DESC_NULLS_FIRST
+}
+
+input StateSortInput {
+  name: Order
+  initials: Order
+  cities: CitySortInput
+}
+
+input CitySortInput {
+  name: Order
+  slug: Order
+}
+
+type Mutation {
+  updateUser(input: UserUpdateInput!): User!
+  login(input: AuthenticationInput!): User!
+  register(input: UserInsertInput!): User!
+  forgot(input: ForgotInput!): String!
+  changePassword(input: ChangePasswordInput!): User!
+  evictRefreshCookie: Boolean!
+  updateCondominium(input: CondominiumUpdateInput!): Condominium!
+  createBlock(input: BlockInsertInput!): Block!
+  updateBlock(id: ID!, input: BlockUpdateInput!): Block!
+  deleteBlock(id: ID!): Block!
+}
+
+input UserUpdateInput {
+  login: String
+  person: PersonUpdateInput
+}
+
+input PersonUpdateInput {
+  name: String
+  lastName: String
+  email: String
+  cpf: String
+  birthdate: DateTime
+  gender: Gender
+  phones: [PhoneUpdateInput!]
+}
+
+input PhoneUpdateInput {
+  ddd: String
+  number: String
+}
+
+input AuthenticationInput {
+  login: String!
+  password: String!
+}
+
+input UserInsertInput {
+  login: String!
+  password: String!
+  person: PersonInsertInput!
+}
+
+input PersonInsertInput {
+  name: String!
+  lastName: String!
+  email: String!
+  cpf: String!
+  birthdate: DateTime!
+  gender: Gender!
+  phones: [PhoneInsertInput!]!
+  condominiums: [CondominiumInsertInput!]!
+}
+
+input PhoneInsertInput {
+  ddd: String!
+  number: String!
+}
+
+input CondominiumInsertInput {
+  companyName: String!
+  cnpj: String!
+  character: String = "#"
+  address: AddressInsertInput!
+  rules: [RuleInsertInput!]
+}
+
+input AddressInsertInput {
+  zip: String!
+  address: String!
+  number: String!
+  city: ID!
+}
+
+input RuleInsertInput {
+  id: String
+  description: String!
+}
+
+input ForgotInput {
+  login: String!
+  callback: String!
+}
+
+input ChangePasswordInput {
+  currentPassword: String!
+  newPassword: String!
+}
+
+input CondominiumUpdateInput {
+  companyName: String
+  cnpj: String
+  character: String = "#"
+  address: AddressInsertInput
+  rules: [RuleInsertInput!]
+}
+
+input BlockInsertInput {
+  name: String!
+  number: Int!
+  image: Upload
+  condominium: ID
+}
+
+"""The `Upload` scalar type represents a file upload."""
+scalar Upload
+
+input BlockUpdateInput {
+  name: String
+  number: Int
+  image: Upload
+  condominium: ID
+}
