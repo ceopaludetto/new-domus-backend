@@ -1,0 +1,10 @@
+#!/bin/sh
+. "$(dirname "$0")/_/husky.sh"
+
+if ! command -v yarn &> /dev/null
+then
+  npm run lint -- --fix
+  exit
+else
+  yarn lint --fix
+fi
