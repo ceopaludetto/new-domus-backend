@@ -32,25 +32,19 @@ module.exports = {
   rules,
   overrides: [
     {
-      files: ["src/**/*.ts", "src/**/*.tsx", "mikro-orm.config.ts"],
+      files: ["src/**/*.ts", "mikro-orm.config.ts"],
       env: {
         node: true,
-        browser: true,
         jest: true,
       },
       extends: [
-        "airbnb-typescript",
-        "airbnb/hooks",
+        "airbnb-typescript/base",
         "plugin:@typescript-eslint/recommended",
         "plugin:promise/recommended",
         "prettier",
       ],
       plugins: ["@typescript-eslint", "promise", "import-helpers", "prettier"],
       parserOptions: {
-        ecmaFeatures: {
-          jsx: true,
-          tsx: true,
-        },
         ecmaVersion: 2020,
         sourceType: "module",
         project: path.resolve("tsconfig.json"),
@@ -67,13 +61,6 @@ module.exports = {
         "@typescript-eslint/explicit-module-boundary-types": "off",
         // Allow any in some logic
         "@typescript-eslint/no-explicit-any": "off",
-        // Some rules that causes some issues
-        "react/button-has-type": "off",
-        "react/require-default-props": "off",
-        "react/prop-types": "off",
-        "react/jsx-props-no-spreading": "off",
-        "react/react-in-jsx-scope": "off",
-        "jsx-a11y/label-has-for": "off",
       },
     },
     {
