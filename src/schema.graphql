@@ -112,13 +112,26 @@ type Condominium {
   people: [Person!]!
 }
 
+type Image {
+  id: ID!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  name: String!
+  aspectRatio: Float!
+  ext: String!
+  width: Float!
+  height: Float!
+  size: Float!
+  block: Block
+}
+
 type Block {
   id: ID!
   createdAt: DateTime!
   updatedAt: DateTime!
   name: String!
   number: Float!
-  image: String
+  images: [Image!]
   condominium: Condominium!
   locals: [Local!]
 }
@@ -267,7 +280,7 @@ input CondominiumUpdateInput {
 input BlockInsertInput {
   name: String!
   number: Int!
-  image: Upload
+  images: [Upload!]
   condominium: ID
 }
 
@@ -277,6 +290,6 @@ scalar Upload
 input BlockUpdateInput {
   name: String
   number: Int
-  image: Upload
+  images: [Upload!]
   condominium: ID
 }

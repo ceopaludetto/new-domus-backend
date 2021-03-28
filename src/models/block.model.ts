@@ -4,6 +4,7 @@ import { ObjectType, Field } from "@nestjs/graphql";
 import { BLOCK } from "../utils/constants";
 import { BaseModel } from "./base.model";
 import { Condominium } from "./condominium.model";
+import { Image } from "./image.model";
 import { Local } from "./local.model";
 
 @ObjectType(BLOCK)
@@ -17,9 +18,9 @@ export class Block extends BaseModel {
   @Property()
   public number!: number;
 
-  @Field({ nullable: true })
-  @Property({ nullable: true })
-  public image?: string;
+  @Field(() => [Image], { nullable: true })
+  @OneToMany({ entity: () => Image, mappedBy: (image) => image.block, nullable: true, orphanRemoval: true })
+  public images?: Collection<Image> = new Collection<Image>(this);
 
   @Field(() => Condominium)
   @ManyToOne({ entity: () => Condominium })

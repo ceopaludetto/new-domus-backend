@@ -1,10 +1,13 @@
 import { Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
-import { createWriteStream, ensureDir, remove } from "fs-extra";
+import { createWriteStream, ensureDir, remove, stat } from "fs-extra";
 import type { FileUpload } from "graphql-upload";
 import path from "path";
 import sharp from "sharp";
 import shortid from "shortid";
+
+import { Image } from "@/models";
+import { streamToPromise } from "@/utils/stream";
 
 @Injectable()
 export class UploadService {
@@ -12,21 +15,28 @@ export class UploadService {
 
   public dir = this.configService.get<string>("UPLOADS_PATH", "uploads");
 
-  public async upload({ createReadStream }: FileUpload) {
-    const file = `${shortid.generate()}.webp`;
-    const filePath = path.resolve(this.dir, file);
+  public async upload(files: FileUpload[]): Promise<Image[]> {
+    return Promise.all(
+      files.map(async ({ createReadStream }) => {
+        const file = `${shortid.generate()}.webp`;
+        const filePath = path.resolve(this.dir, file);
 
-    const stream = createReadStream();
+        const stream = createReadStream();
 
-    return new Promise<string>((resolve, reject) => {
-      stream
-        .pipe(sharp().webp())
-        .pipe(createWriteStream(filePath))
-        .on("finish", () => {
-          resolve(file);
-        })
-        .on("error", reject);
-    });
+        await streamToPromise(stream.pipe(sharp().webp({ quality: 60 })).pipe(createWriteStream(filePath)));
+
+        const { width, height } = await sharp(filePath).metadata();
+
+        const small = Math.min(width ?? 0, height ?? 0);
+        const big = Math.max(width ?? 0, height ?? 0);
+
+        const aspectRatio = small / big;
+
+        const { size } = await stat(filePath);
+
+        return Image.create({ name: file, aspectRatio, ext: "webp", width, height, size });
+      })
+    );
   }
 
   public async delete(file: string) {

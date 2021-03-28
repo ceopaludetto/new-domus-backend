@@ -9,3 +9,4 @@ export { User } from "./user.model";
 export { Address } from "./address.model";
 export { BaseModel } from "./base.model";
 export { Rule } from "./rule.model";
+export { Image } from "./image.model";

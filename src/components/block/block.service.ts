@@ -33,13 +33,19 @@ export class BlockService {
     return this.blockModel.findOne({ id }, mapped);
   }
 
-  public async create({ image, ...data }: BlockInsertInput, mapped?: Mapped<Block>) {
+  public async create({ images, ...data }: BlockInsertInput, mapped?: Mapped<Block>) {
     const block = this.blockModel.create(data);
 
-    if (image) {
-      const path = await this.uploadService.upload(await image);
+    if (images) {
+      const uploads = await this.uploadService.upload(await Promise.all(images));
 
-      block.image = path;
+      block.images?.set(
+        uploads.map((upload) => {
+          upload.block = block;
+
+          return upload;
+        })
+      );
     }
 
     await this.flush(block);
@@ -47,21 +53,27 @@ export class BlockService {
     return this.populate(block, mapped);
   }
 
-  public async update(id: string, { image, ...data }: BlockUpdateInput, mapped?: Mapped<Block>) {
+  public async update(id: string, { images, ...data }: BlockUpdateInput, mapped?: Mapped<Block>) {
     const block = await this.blockModel.findOne({ id });
 
     if (!block) {
       throw new UserInputError("Block not found");
     }
 
-    if (image) {
-      const path = await this.uploadService.upload(await image);
+    if (images) {
+      const uploads = await this.uploadService.upload(await Promise.all(images));
 
-      if (block.image) {
-        await this.uploadService.delete(block.image);
+      if (block.images) {
+        await Promise.all((await block.images.loadItems()).map((image) => this.uploadService.delete(image.name)));
       }
 
-      block.image = path;
+      block.images?.set(
+        uploads.map((upload) => {
+          upload.block = block;
+
+          return upload;
+        })
+      );
     }
 
     this.blockModel.assign(block, data);
@@ -82,8 +94,8 @@ export class BlockService {
 
     await this.blockModel.removeAndFlush(block);
 
-    if (block.image) {
-      await this.uploadService.delete(block.image);
+    if (block.images) {
+      await Promise.all((await block.images.loadItems()).map((image) => this.uploadService.delete(image.name)));
     }
 
     return populated;

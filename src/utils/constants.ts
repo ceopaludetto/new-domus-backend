@@ -17,6 +17,7 @@ export const PHONE = "Phone";
 export const ADDRESS = "Address";
 export const SETTINGS = "Settings";
 export const RULE = "Rule";
+export const IMAGE = "Image";
 
 // Mailer
 export const MAILER = "@MAILER";
