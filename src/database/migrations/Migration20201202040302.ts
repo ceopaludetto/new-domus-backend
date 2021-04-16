@@ -3,7 +3,7 @@ import { Migration } from "@mikro-orm/migrations";
 import { USER } from "../../utils/constants";
 
 export class Migration20201202040302 extends Migration {
-  async up() {
+  public async up() {
     const k = this.getKnex();
 
     this.execute(
@@ -15,7 +15,7 @@ export class Migration20201202040302 extends Migration {
     );
   }
 
-  async down() {
+  public async down() {
     const k = this.getKnex();
 
     this.execute(

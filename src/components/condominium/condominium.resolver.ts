@@ -2,9 +2,9 @@ import { UseGuards } from "@nestjs/common";
 import { Resolver, Query, Args, Mutation } from "@nestjs/graphql";
 
 import { Condominium } from "@/models";
-import { ShowAll, FindByID } from "@/utils/common.dto";
+import { FindByID } from "@/utils/common.dto";
 import type { Mapped } from "@/utils/common.dto";
-import { MapFields } from "@/utils/plugins";
+import { ConnectionArgs, fromArray, MapFields, ShowAllQuery } from "@/utils/plugins";
 
 import { GqlAuthGuard } from "../authentication/authentication.guard";
 import { CurrentCondominium } from "./condominium.decorator";
@@ -16,12 +16,15 @@ import { CondominiumUpdateInput } from "./condonimium.dto";
 export class CondominiumResolver {
   public constructor(private readonly condominiumService: CondominiumService) {}
 
-  @Query(() => [Condominium])
+  @ShowAllQuery(() => Condominium)
   public async showCondominiums(
-    @Args({ nullable: true }) { take, skip }: ShowAll,
-    @MapFields() mapped?: Mapped<Condominium>
+    @Args() args: ConnectionArgs,
+    @MapFields({ paginated: true }) mapped?: Mapped<Condominium>
   ) {
-    return this.condominiumService.showAll({ take, skip }, mapped);
+    const { offset, limit } = args.paginationParams();
+    const [condominiums, count] = await this.condominiumService.showAll({ offset, limit }, mapped);
+
+    return fromArray(condominiums, args, count, offset);
   }
 
   @Query(() => Condominium)

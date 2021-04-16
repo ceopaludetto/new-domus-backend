@@ -11,10 +11,29 @@ export function installMiddlewares(app: INestApplication) {
   app.useGlobalPipes(
     new ValidationPipe({
       transform: true,
+      transformOptions: {
+        enableImplicitConversion: true,
+      },
       dismissDefaultMessages: true,
       exceptionFactory: (errors) => new UserInputError("Erro de validação", formatErrors(errors)),
     })
   );
+
+  app.use(cookie());
+  app.enableCors({
+    origin: true,
+    credentials: true,
+    allowedHeaders: ["Content-Type", "X-Access-Token", "X-Condominium", "Cookie", "Set-Cookie"],
+    exposedHeaders: [
+      "X-Access-Token",
+      "Access-Control-Allow-Origin",
+      "Access-Control-Allow-Credentials",
+      "Cookie",
+      "Set-Cookie",
+      "ETag",
+      "Date",
+    ],
+  });
 
   app.use(
     helmet({
@@ -30,6 +49,4 @@ export function installMiddlewares(app: INestApplication) {
       })
     );
   }
-
-  app.use(cookie());
 }

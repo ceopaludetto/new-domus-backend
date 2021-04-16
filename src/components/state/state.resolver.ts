@@ -1,9 +1,9 @@
 import { Resolver, Args, Query } from "@nestjs/graphql";
 
 import { State } from "@/models";
-import { FindByID, ShowAll } from "@/utils/common.dto";
+import { FindByID } from "@/utils/common.dto";
 import type { Mapped, Sort } from "@/utils/common.dto";
-import { MapFields, SortFields } from "@/utils/plugins";
+import { ConnectionArgs, fromArray, MapFields, ShowAllQuery, SortFields } from "@/utils/plugins";
 
 import { StateSortInput } from "./state.dto";
 import { StateService } from "./state.service";
@@ -12,13 +12,16 @@ import { StateService } from "./state.service";
 export class StateResolver {
   public constructor(private readonly stateService: StateService) {}
 
-  @Query(() => [State])
+  @ShowAllQuery(() => State)
   public async showStates(
-    @Args({ nullable: true }) { skip, take }: ShowAll,
-    @MapFields() mapped?: Mapped<State>,
+    @Args() args: ConnectionArgs,
+    @MapFields({ paginated: true }) mapped?: Mapped<State>,
     @SortFields(() => StateSortInput) sort?: Sort<State>
   ) {
-    return this.stateService.showAll({ skip, take, sort }, mapped);
+    const { offset, limit } = args.paginationParams();
+    const [states, count] = await this.stateService.showAll({ offset, limit, sort }, mapped);
+
+    return fromArray(states, args, count, offset);
   }
 
   @Query(() => State)

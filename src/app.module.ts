@@ -20,6 +20,8 @@ import {
   UserModule,
   BlockModule,
   UploadModule,
+  ImageModule,
+  LocalModule,
 } from "@/components";
 import * as entities from "@/models";
 import type { ContextType } from "@/utils/common.dto";
@@ -117,6 +119,8 @@ import { validate } from "@/utils/validations/configuration";
     CityModule,
     BlockModule,
     UploadModule,
+    ImageModule,
+    LocalModule,
   ],
 })
 export class ApplicationModule implements NestModule {

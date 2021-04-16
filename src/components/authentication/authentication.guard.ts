@@ -4,6 +4,7 @@ import { AuthGuard } from "@nestjs/passport";
 import { AuthenticationError } from "apollo-server-express";
 import type { Request, Response } from "express";
 
+import type { ContextType } from "@/utils/common.dto";
 import { ACCESS_TOKEN, REFRESH_TOKEN } from "@/utils/constants";
 
 import { AuthenticationService } from "./authentication.service";
@@ -26,9 +27,7 @@ export class GqlAuthGuard extends AuthGuard("jwt") {
     if (refreshCookie) {
       const [bearer, refreshToken] = refreshCookie.split(" ");
 
-      if (bearer.trim() !== "Bearer") {
-        throw new AuthenticationError("Token mal-formatado");
-      }
+      if (bearer.trim() !== "Bearer") throw new AuthenticationError("Token mal-formatado");
 
       const decoded: { id: string; password: string } = await this.authenticationService.verifyToken(refreshToken);
 
@@ -44,22 +43,30 @@ export class GqlAuthGuard extends AuthGuard("jwt") {
 
   public async canActivate(context: ExecutionContext) {
     const ctx = GqlExecutionContext.create(context);
-    const { req, res }: { req: Request; res: Response } = ctx.getContext();
+    const { req, res }: ContextType = ctx.getContext();
 
     const accessToken = fromAccessTokenHeader(req);
 
     if (!accessToken) {
       await this.flushRefreshCookie(req, res);
-    } else {
-      try {
-        await this.authenticationService.verifyToken(accessToken);
-      } catch (error) {
-        if (!error.expiredAt) throw new AuthenticationError("Token incorreto");
 
-        await this.flushRefreshCookie(req, res);
-      }
+      return super.canActivate(context) as boolean;
+    }
+
+    try {
+      await this.authenticationService.verifyToken(accessToken);
+    } catch (error) {
+      if (!error.expiredAt) throw new AuthenticationError("Token incorreto");
+
+      await this.flushRefreshCookie(req, res);
     }
 
     return super.canActivate(context) as boolean;
+  }
+
+  public handleRequest(exception?: Error, user?: any) {
+    if (exception || !user) throw new AuthenticationError("Não autenticado");
+
+    return user;
   }
 }

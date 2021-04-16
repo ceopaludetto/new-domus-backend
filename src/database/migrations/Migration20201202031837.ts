@@ -4,7 +4,7 @@ import { CONDOMINIUM } from "../../utils/constants";
 import { defaults } from "../defaults";
 
 export class Migration20201202031837 extends Migration {
-  async up() {
+  public async up() {
     const k = this.getKnex();
 
     this.execute(
@@ -19,7 +19,7 @@ export class Migration20201202031837 extends Migration {
     );
   }
 
-  async down() {
+  public async down() {
     const k = this.getKnex();
 
     this.execute(k.schema.dropTable(CONDOMINIUM).toQuery());

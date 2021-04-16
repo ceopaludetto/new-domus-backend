@@ -19,13 +19,13 @@ export class ShowAll {
   @IsNumber()
   @IsInt()
   @Field(() => Int, { nullable: true })
-  public take?: number;
+  public offset?: number;
 
   @IsOptional()
   @IsNumber()
   @IsInt()
   @Field(() => Int, { nullable: true, defaultValue: 0 })
-  public skip?: number;
+  public limit?: number;
 }
 
 export type Sort<T, U extends keyof T = keyof T> = { [P in U]: QueryOrderKeys };

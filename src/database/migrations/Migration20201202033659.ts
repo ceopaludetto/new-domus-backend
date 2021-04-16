@@ -5,7 +5,7 @@ import { generate } from "shortid";
 import { STATE } from "../../utils/constants";
 
 export class Migration20201202033659 extends Migration {
-  async up() {
+  public async up() {
     const k = this.getKnex();
 
     const res = await axios.get<{ sigla: string; nome: string; id: number }[]>(
@@ -32,7 +32,7 @@ export class Migration20201202033659 extends Migration {
     );
   }
 
-  async down() {
+  public async down() {
     const k = this.getKnex();
 
     this.execute(k(STATE).delete().toQuery());

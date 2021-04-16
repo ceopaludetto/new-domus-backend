@@ -4,7 +4,7 @@ import { USER, PERSON } from "../../utils/constants";
 import { defaults } from "../defaults";
 
 export class Migration20201202032232 extends Migration {
-  async up(): Promise<void> {
+  public async up(): Promise<void> {
     const k = this.getKnex();
 
     this.execute(
@@ -19,7 +19,7 @@ export class Migration20201202032232 extends Migration {
     );
   }
 
-  async down() {
+  public async down() {
     const k = this.getKnex();
 
     this.execute(k.schema.dropTable(USER).toQuery());

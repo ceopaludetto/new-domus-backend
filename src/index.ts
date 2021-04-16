@@ -11,7 +11,6 @@ import { ApplicationModule } from "./app.module";
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(ApplicationModule, {
     logger: false,
-    cors: { origin: "http://localhost:3000", credentials: true },
   });
   const logger = app.get(Logger);
   app.useLogger(logger);
@@ -30,4 +29,5 @@ async function bootstrap() {
   }
 }
 
-bootstrap();
+// eslint-disable-next-line no-console
+bootstrap().catch(console.error);

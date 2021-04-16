@@ -16,14 +16,14 @@ export class BlockService {
     private readonly uploadService: UploadService
   ) {}
 
-  public async showAll(condominium: string, { skip = 0, take }: ShowAll, mapped?: Mapped<Block>) {
-    return this.blockModel.find(
+  public async showAll(condominium: string, { offset = 0, limit }: ShowAll, mapped?: Mapped<Block>) {
+    return this.blockModel.findAndCount(
       {
         condominium,
       },
       {
-        offset: skip,
-        limit: take,
+        offset,
+        limit,
         populate: mapped,
       }
     );

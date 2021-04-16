@@ -6,7 +6,7 @@ import { generate } from "shortid";
 import { STATE, CITY } from "../../utils/constants";
 
 export class Migration20201202034055 extends Migration {
-  async up() {
+  public async up() {
     const k = this.getKnex();
 
     const states = await this.execute(k(STATE).select<{ code: number; id: string }[]>().toQuery());
@@ -38,7 +38,7 @@ export class Migration20201202034055 extends Migration {
     );
   }
 
-  async down() {
+  public async down() {
     const k = this.getKnex();
 
     this.execute(k(CITY).delete().toQuery());

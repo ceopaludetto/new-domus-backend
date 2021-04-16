@@ -9,12 +9,15 @@ import type { ShowAll, Mapped } from "@/utils/common.dto";
 export class LocalService {
   public constructor(@InjectRepository(Local) private readonly localModel: EntityRepository<Local>) {}
 
-  public async showAll({ skip = 0, take }: ShowAll, mapped?: Mapped<Local>) {
-    return this.localModel.findAll({
-      offset: skip,
-      limit: take,
-      populate: mapped,
-    });
+  public async showAll({ offset = 0, limit }: ShowAll, mapped?: Mapped<Local>) {
+    return this.localModel.findAndCount(
+      {},
+      {
+        offset,
+        limit,
+        populate: mapped,
+      }
+    );
   }
 
   public async findByID(id: string, mapped?: Mapped<Local>) {

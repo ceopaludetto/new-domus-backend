@@ -1,9 +1,9 @@
 import { Resolver, Query, Args } from "@nestjs/graphql";
 
 import { Local } from "@/models";
-import { ShowAll, FindByID } from "@/utils/common.dto";
+import { FindByID } from "@/utils/common.dto";
 import type { Mapped } from "@/utils/common.dto";
-import { MapFields } from "@/utils/plugins";
+import { ConnectionArgs, fromArray, MapFields, ShowAllQuery } from "@/utils/plugins";
 
 import { LocalService } from "./local.service";
 
@@ -11,9 +11,12 @@ import { LocalService } from "./local.service";
 export class LocalResolver {
   public constructor(private readonly localService: LocalService) {}
 
-  @Query(() => [Local])
-  public showLocals(@Args({ nullable: true }) { take, skip }: ShowAll, @MapFields() mapped?: Mapped<Local>) {
-    return this.localService.showAll({ take, skip }, mapped);
+  @ShowAllQuery(() => Local)
+  public async showLocals(@Args() args: ConnectionArgs, @MapFields({ paginated: true }) mapped?: Mapped<Local>) {
+    const { offset, limit } = args.paginationParams();
+    const [locals, count] = await this.localService.showAll({ offset, limit }, mapped);
+
+    return fromArray(locals, args, count, offset);
   }
 
   @Query(() => Local)

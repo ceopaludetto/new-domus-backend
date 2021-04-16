@@ -7,3 +7,5 @@ export * from "./city";
 export * from "./user";
 export * from "./block";
 export * from "./upload";
+export * from "./image";
+export * from "./local";

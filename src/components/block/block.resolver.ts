@@ -4,25 +4,30 @@ import { Resolver, Args, Query, Mutation } from "@nestjs/graphql";
 import { GqlAuthGuard } from "@/components/authentication/authentication.guard";
 import { GqlCondominiumGuard, CurrentCondominium } from "@/components/condominium";
 import { Block } from "@/models";
-import { FindByID, ShowAll } from "@/utils/common.dto";
+import { FindByID } from "@/utils/common.dto";
 import type { Mapped } from "@/utils/common.dto";
-import { MapFields } from "@/utils/plugins";
+import { MapFields, ShowAllQuery } from "@/utils/plugins";
+import { ConnectionArgs, fromArray } from "@/utils/plugins/pagination.parameters";
 
+import { ImageService } from "../image";
 import { BlockInsertInput, BlockUpdateInput } from "./block.dto";
 import { BlockService } from "./block.service";
 
 @Resolver(() => Block)
 export class BlockResolver {
-  public constructor(private readonly blockService: BlockService) {}
+  public constructor(private readonly blockService: BlockService, private readonly imageService: ImageService) {}
 
   @UseGuards(GqlAuthGuard, GqlCondominiumGuard)
-  @Query(() => [Block])
+  @ShowAllQuery(() => Block)
   public async showBlocks(
-    @Args({ nullable: true }) { take, skip }: ShowAll,
+    @Args() args: ConnectionArgs,
     @CurrentCondominium() condominium: string,
-    @MapFields() mapped?: Mapped<Block>
+    @MapFields({ paginated: true }) mapped?: Mapped<Block>
   ) {
-    return this.blockService.showAll(condominium, { take, skip }, mapped);
+    const { offset, limit } = args.paginationParams();
+    const [blocks, count] = await this.blockService.showAll(condominium, { offset, limit }, mapped);
+
+    return fromArray(blocks, args, count, offset);
   }
 
   @Query(() => Block)

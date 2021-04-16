@@ -1,9 +1,9 @@
 import { Resolver, Query, Args } from "@nestjs/graphql";
 
 import { City } from "@/models";
-import { ShowAll, FindByID } from "@/utils/common.dto";
+import { FindByID } from "@/utils/common.dto";
 import type { Mapped, Sort } from "@/utils/common.dto";
-import { MapFields, SortFields } from "@/utils/plugins";
+import { MapFields, SortFields, ConnectionArgs, fromArray, ShowAllQuery } from "@/utils/plugins";
 
 import { CitySortInput } from "./city.dto";
 import { CityService } from "./city.service";
@@ -12,13 +12,16 @@ import { CityService } from "./city.service";
 export class CityResolver {
   public constructor(private readonly cityService: CityService) {}
 
-  @Query(() => [City])
+  @ShowAllQuery(() => City)
   public async showCities(
-    @Args({ nullable: true }) { take, skip }: ShowAll,
+    @Args() args: ConnectionArgs,
     @SortFields(() => CitySortInput) sort?: Sort<City>,
-    @MapFields() mapped?: Mapped<City>
+    @MapFields({ paginated: true }) mapped?: Mapped<City>
   ) {
-    return this.cityService.showAll({ skip, take, sort }, mapped);
+    const { offset, limit } = args.paginationParams();
+    const [cities, count] = await this.cityService.showAll({ offset, limit, sort }, mapped);
+
+    return fromArray(cities, args, count, offset);
   }
 
   @Query(() => City)

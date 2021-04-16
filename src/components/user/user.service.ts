@@ -12,13 +12,16 @@ import type { UserInsertInput, UserUpdateInput } from "./user.dto";
 export class UserService {
   public constructor(@InjectRepository(User) private readonly userModel: EntityRepository<User>) {}
 
-  public async showAll({ skip = 0, sort, take }: ShowAllWithSort, mapped?: Mapped<User>) {
-    return this.userModel.findAll({
-      offset: skip,
-      limit: take,
-      orderBy: sort,
-      populate: mapped,
-    });
+  public async showAll({ offset = 0, sort, limit }: ShowAllWithSort, mapped?: Mapped<User>) {
+    return this.userModel.findAndCount(
+      {},
+      {
+        offset,
+        limit,
+        orderBy: sort,
+        populate: mapped,
+      }
+    );
   }
 
   public async findByLogin(login: string, mapped?: Mapped<User>) {

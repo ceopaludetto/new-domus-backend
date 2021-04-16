@@ -1,9 +1,9 @@
 import { Resolver, Query, Args } from "@nestjs/graphql";
 
 import { Person } from "@/models";
-import { FindByID, ShowAll } from "@/utils/common.dto";
+import { FindByID } from "@/utils/common.dto";
 import type { Mapped } from "@/utils/common.dto";
-import { MapFields } from "@/utils/plugins";
+import { ConnectionArgs, fromArray, MapFields, ShowAllQuery } from "@/utils/plugins";
 
 import { PersonService } from "./person.service";
 
@@ -11,9 +11,12 @@ import { PersonService } from "./person.service";
 export class PersonResolver {
   public constructor(private readonly personService: PersonService) {}
 
-  @Query(() => [Person])
-  public async showPeople(@Args({ nullable: true }) { skip, take }: ShowAll, @MapFields() mapped?: Mapped<Person>) {
-    return this.personService.showAll({ skip, take }, mapped);
+  @ShowAllQuery(() => Person)
+  public async showPeople(@Args() args: ConnectionArgs, @MapFields({ paginated: true }) mapped?: Mapped<Person>) {
+    const { offset, limit } = args.paginationParams();
+    const [people, count] = await this.personService.showAll({ offset, limit }, mapped);
+
+    return fromArray(people, args, count, offset);
   }
 
   @Query(() => Person)

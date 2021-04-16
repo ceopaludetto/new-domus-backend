@@ -9,13 +9,16 @@ import type { Mapped, ShowAllWithSort } from "@/utils/common.dto";
 export class StateService {
   public constructor(@InjectRepository(State) private readonly stateModel: EntityRepository<State>) {}
 
-  public async showAll({ skip = 0, take, sort }: ShowAllWithSort, mapped?: Mapped<State>) {
-    return this.stateModel.findAll({
-      offset: skip,
-      limit: take,
-      orderBy: sort,
-      populate: mapped,
-    });
+  public async showAll({ offset = 0, limit, sort }: ShowAllWithSort, mapped?: Mapped<State>) {
+    return this.stateModel.findAndCount(
+      {},
+      {
+        offset,
+        limit,
+        orderBy: sort,
+        populate: mapped,
+      }
+    );
   }
 
   public async findByID(id: string, mapped?: Mapped<State>) {

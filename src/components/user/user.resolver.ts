@@ -3,9 +3,9 @@ import { Resolver, Query, Args, Mutation, Context } from "@nestjs/graphql";
 
 import { GqlAuthGuard } from "@/components/authentication/authentication.guard";
 import { User } from "@/models";
-import { FindByID, ShowAll, ContextType } from "@/utils/common.dto";
+import { FindByID, ContextType } from "@/utils/common.dto";
 import type { Mapped, Sort } from "@/utils/common.dto";
-import { MapFields, SortFields } from "@/utils/plugins";
+import { ConnectionArgs, fromArray, MapFields, ShowAllQuery, SortFields } from "@/utils/plugins";
 
 import { FindUserByLogin, UserSortInput, UserUpdateInput } from "./user.dto";
 import { UserService } from "./user.service";
@@ -14,13 +14,16 @@ import { UserService } from "./user.service";
 export class UserResolver {
   public constructor(private readonly userService: UserService) {}
 
-  @Query(() => [User])
+  @ShowAllQuery(() => User)
   public async showUsers(
-    @Args({ nullable: true }) { skip, take }: ShowAll,
+    @Args() args: ConnectionArgs,
     @SortFields(() => UserSortInput) sort?: Sort<User>,
-    @MapFields() mapped?: Mapped<User>
+    @MapFields({ paginated: true }) mapped?: Mapped<User>
   ) {
-    return this.userService.showAll({ skip, sort, take }, mapped);
+    const { offset, limit } = args.paginationParams();
+    const [users, count] = await this.userService.showAll({ offset, limit, sort }, mapped);
+
+    return fromArray(users, args, count, offset);
   }
 
   @Query(() => User)

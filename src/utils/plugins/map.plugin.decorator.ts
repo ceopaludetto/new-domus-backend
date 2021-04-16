@@ -5,15 +5,35 @@ import type { GraphQLResolveInfo } from "graphql";
 
 import { GraphQLFieldsToRelations } from "./fields.to.relation";
 
+interface MapFieldsOptions {
+  paginated?: boolean;
+  root?: string[];
+}
+
 @Injectable()
 class MapFieldsPipe implements PipeTransform {
-  public constructor(private readonly root?: string) {}
+  public constructor(private readonly options: MapFieldsOptions = {}) {}
 
   public transform(value: GraphQLResolveInfo) {
-    const fields = GraphQLFieldsToRelations(value as any, { exclude: ["__typename"], root: this.root });
+    let root = [...(this.options?.root ?? [])];
+
+    if (this.options?.paginated && !this.options?.root) {
+      root = ["edges", "node"];
+    }
+
+    const last = root.pop();
+
+    const fields = GraphQLFieldsToRelations(value as any, {
+      exclude: ["__typename"],
+      root: root.join("."),
+    });
+
+    if (last) {
+      return fields.map((field) => field.replace(new RegExp(`${last}\\.?`), "")).filter(Boolean);
+    }
 
     return fields;
   }
 }
 
-export const MapFields = (root?: string) => Info(new MapFieldsPipe(root));
+export const MapFields = (options?: MapFieldsOptions) => Info(new MapFieldsPipe(options));

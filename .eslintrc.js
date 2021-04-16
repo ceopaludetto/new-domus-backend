@@ -23,8 +23,8 @@ module.exports = {
   env: {
     node: true,
   },
-  extends: ["plugin:promise/recommended", "prettier"],
-  plugins: ["promise", "import-helpers", "prettier"],
+  extends: ["prettier"],
+  plugins: ["import-helpers", "prettier"],
   parserOptions: {
     ecmaVersion: 2020,
     sourceType: "module",
@@ -37,13 +37,8 @@ module.exports = {
         node: true,
         jest: true,
       },
-      extends: [
-        "airbnb-typescript/base",
-        "plugin:@typescript-eslint/recommended",
-        "plugin:promise/recommended",
-        "prettier",
-      ],
-      plugins: ["@typescript-eslint", "promise", "import-helpers", "prettier"],
+      extends: ["airbnb-typescript/base", "plugin:@typescript-eslint/recommended", "prettier"],
+      plugins: ["@typescript-eslint", "import-helpers", "prettier"],
       parserOptions: {
         ecmaVersion: 2020,
         sourceType: "module",
@@ -61,6 +56,7 @@ module.exports = {
         "@typescript-eslint/explicit-module-boundary-types": "off",
         // Allow any in some logic
         "@typescript-eslint/no-explicit-any": "off",
+        "@typescript-eslint/explicit-member-accessibility": ["error"],
       },
     },
     {

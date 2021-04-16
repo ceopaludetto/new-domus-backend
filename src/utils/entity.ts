@@ -8,11 +8,11 @@ export function create<T>(Entity: Type<T>, data: EntityData<T>) {
 
   const keys = Object.keys(data) as (keyof T)[];
 
-  keys.forEach((key) => {
+  for (const key of keys) {
     if (data[key]) {
       rule[key] = data[key] as any;
     }
-  });
+  }
 
   return rule;
 }

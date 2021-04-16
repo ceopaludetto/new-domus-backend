@@ -2,7 +2,7 @@ version: "2"
 
 services:
   postgres:
-    image: postgres:alpine
+    image: postgres
     restart: unless-stopped
     ports:
       - 5432:5432

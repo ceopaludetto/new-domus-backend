@@ -5,7 +5,7 @@ import { Gender } from "../../utils/enums";
 import { defaults } from "../defaults";
 
 export class Migration20201202031605 extends Migration {
-  async up() {
+  public async up() {
     const k = this.getKnex();
 
     this.execute(
@@ -24,7 +24,7 @@ export class Migration20201202031605 extends Migration {
     );
   }
 
-  async down() {
+  public async down() {
     const k = this.getKnex();
 
     this.execute(k.schema.dropTable(PERSON).toQuery());

@@ -17,10 +17,6 @@ export class City extends BaseModel {
   @Property({ unique: true })
   public code!: number;
 
-  @Field()
-  @Property()
-  public slug!: string;
-
   @Field(() => State)
   @ManyToOne({ entity: () => State })
   public state!: State;
