@@ -23,16 +23,8 @@ export function installMiddlewares(app: INestApplication) {
   app.enableCors({
     origin: true,
     credentials: true,
-    allowedHeaders: ["Content-Type", "X-Access-Token", "X-Condominium", "Cookie", "Set-Cookie"],
-    exposedHeaders: [
-      "X-Access-Token",
-      "Access-Control-Allow-Origin",
-      "Access-Control-Allow-Credentials",
-      "Cookie",
-      "Set-Cookie",
-      "ETag",
-      "Date",
-    ],
+    allowedHeaders: ["Content-Type", "X-Access-Token", "X-Condominium"],
+    exposedHeaders: ["X-Access-Token"],
   });
 
   app.use(

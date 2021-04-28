@@ -34,8 +34,7 @@ export class AuthenticationService {
 
   public setTokensInResponse(tokens: { accessToken: string; refreshToken: string }, res: Response) {
     res.cookie(REFRESH_TOKEN, `Bearer ${tokens.refreshToken}`, {
-      sameSite: "none",
-      domain: "localhost",
+      sameSite: "lax",
       httpOnly: true,
       secure: true,
       maxAge: ms("7d"),
