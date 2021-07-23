@@ -1,6 +1,5 @@
 import { MikroOrmModule } from "@mikro-orm/nestjs";
-import { Module, OnModuleInit } from "@nestjs/common";
-import { InjectPinoLogger, PinoLogger } from "nestjs-pino";
+import { Module } from "@nestjs/common";
 
 import { City } from "@/models";
 
@@ -12,10 +11,4 @@ import { CityService } from "./city.service";
   providers: [CityService, CityResolver],
   exports: [CityService],
 })
-export class CityModule implements OnModuleInit {
-  public constructor(@InjectPinoLogger(CityModule.name) private readonly logger: PinoLogger) {}
-
-  public onModuleInit() {
-    this.logger.info(`CityModule successfully started`);
-  }
-}
+export class CityModule {}

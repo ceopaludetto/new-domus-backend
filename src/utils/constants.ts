@@ -27,3 +27,6 @@ export const ADAPTER = "@ADAPTER";
 export const ACCESS_TOKEN = "X-Access-Token";
 export const REFRESH_TOKEN = "X-Refresh-Token";
 export const CONDOMINIUM_TOKEN = "X-Condominium";
+
+// AWS
+export const AWS_S3_TOKEN = "@AWS:S3";

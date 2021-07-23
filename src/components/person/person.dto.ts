@@ -1,9 +1,8 @@
 import { InputType, Field, PartialType, OmitType } from "@nestjs/graphql";
 import { Type } from "class-transformer";
-import { IsString, IsEmail, IsEnum, IsDate, IsOptional, ValidateNested } from "class-validator";
+import { IsString, IsEmail, IsEnum, IsDate, ValidateNested, IsPhoneNumber } from "class-validator";
 
 import { CondominiumInsertInput } from "@/components/condominium";
-import { PhoneInsertInput, PhoneUpdateInput } from "@/components/phone";
 import { Gender } from "@/utils/enums";
 import { RemoveMask, Trim, Mail } from "@/utils/transforms";
 import { IsCPF } from "@/utils/validations/is.cpf";
@@ -42,10 +41,10 @@ export class PersonInsertInput {
   @IsEnum(Gender)
   public gender!: Gender;
 
-  @Field(() => [PhoneInsertInput])
-  @ValidateNested()
-  @Type(() => PhoneInsertInput)
-  public phones!: PhoneInsertInput[];
+  @Field(() => [String])
+  @RemoveMask()
+  @IsPhoneNumber("BR", { each: true })
+  public phones!: string[];
 
   @Field(() => [CondominiumInsertInput])
   @ValidateNested()
@@ -54,10 +53,4 @@ export class PersonInsertInput {
 }
 
 @InputType()
-export class PersonUpdateInput extends PartialType(OmitType(PersonInsertInput, ["condominiums", "phones"])) {
-  @Field(() => [PhoneUpdateInput], { nullable: true })
-  @Type(() => PhoneUpdateInput)
-  @ValidateNested()
-  @IsOptional()
-  public phones?: PhoneUpdateInput[];
-}
+export class PersonUpdateInput extends PartialType(OmitType(PersonInsertInput, ["condominiums"])) {}

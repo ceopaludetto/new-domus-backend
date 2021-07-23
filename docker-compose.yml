@@ -32,6 +32,16 @@ services:
     ports:
       - 9999:8080
 
+  localstack:
+    image: localstack/localstack
+    ports:
+      - "4566-4583:4566-4583"
+    environment:
+      SERVICES: s3
+      DATA_DIR: /tmp/localstack/data
+    volumes:
+      - "./tmp:/tmp/localstack"
+
 volumes:
   pgdata:
 

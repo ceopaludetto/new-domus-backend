@@ -42,7 +42,12 @@ const EnviromentSchema = Yup.object({
 
   GRAPHQL_SCHEMA: Yup.string(),
 
-  UPLOADS_PATH: Yup.string().required(),
+  AWS_HOST: Yup.string().required().default("localhost"),
+  AWS_PORT: Yup.number().required().default(4566),
+  AWS_REGION: Yup.string().required().default("us-east-1"),
+  AWS_ACCESS_KEY_ID: Yup.string().required().default("test"),
+  AWS_SECRET_ACCESS_KEY: Yup.string().required().default("test"),
+  AWS_BUCKET: Yup.string().required().default("domusdev"),
 }).required();
 
 type EnviromentValues = Yup.InferType<typeof EnviromentSchema>;

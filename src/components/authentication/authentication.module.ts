@@ -1,8 +1,7 @@
-import { Module, OnModuleInit, Global } from "@nestjs/common";
+import { Module, Global } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { JwtModule } from "@nestjs/jwt";
 import { PassportModule } from "@nestjs/passport";
-import { PinoLogger, InjectPinoLogger } from "nestjs-pino";
 
 import { UserModule } from "@/components/user";
 
@@ -26,10 +25,4 @@ import { JwtStrategy } from "./strategies/jwt.strategy";
   providers: [AuthenticationService, AuthenticationResolver, JwtStrategy],
   exports: [AuthenticationService, PassportModule],
 })
-export class AuthenticationModule implements OnModuleInit {
-  public constructor(@InjectPinoLogger(AuthenticationModule.name) private readonly logger: PinoLogger) {}
-
-  public onModuleInit() {
-    this.logger.info(`AuthenticationModule successfully started`);
-  }
-}
+export class AuthenticationModule {}

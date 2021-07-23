@@ -1,11 +1,10 @@
-import { Entity, Property, Enum, OneToOne, OneToMany, Collection, ManyToMany } from "@mikro-orm/core";
+import { Entity, Property, Enum, OneToOne, Collection, ManyToMany, ArrayType } from "@mikro-orm/core";
 import { ObjectType, Field, registerEnumType } from "@nestjs/graphql";
 
 import { PERSON } from "../utils/constants";
 import { Gender } from "../utils/enums";
 import { BaseModel } from "./base.model";
 import { Condominium } from "./condominium.model";
-import { Phone } from "./phone.model";
 import { User } from "./user.model";
 
 function generateHexColor() {
@@ -47,9 +46,9 @@ export class Person extends BaseModel {
   @Property()
   public birthdate!: Date;
 
-  @Field(() => [Phone])
-  @OneToMany({ entity: () => Phone, mappedBy: (phone) => phone.person, orphanRemoval: true })
-  public phones: Collection<Phone> = new Collection<Phone>(this);
+  @Field(() => [String])
+  @Property({ type: ArrayType })
+  public phones!: string[];
 
   @Field(() => User)
   @OneToOne({ entity: () => User, mappedBy: (user) => user.person })

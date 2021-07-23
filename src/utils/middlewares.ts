@@ -1,9 +1,7 @@
 import { INestApplication, ValidationPipe } from "@nestjs/common";
 import { UserInputError } from "apollo-server-express";
 import cookie from "cookie-parser";
-import { static as serve } from "express";
 import helmet from "helmet";
-import path from "path";
 
 import { formatErrors } from "./validations/format";
 
@@ -23,7 +21,7 @@ export function installMiddlewares(app: INestApplication) {
   app.enableCors({
     origin: true,
     credentials: true,
-    allowedHeaders: ["Content-Type", "X-Access-Token", "X-Condominium"],
+    allowedHeaders: ["Content-Type", "X-Access-Token", "X-Condominium", "Origin"],
     exposedHeaders: ["X-Access-Token"],
   });
 
@@ -32,13 +30,4 @@ export function installMiddlewares(app: INestApplication) {
       contentSecurityPolicy: false,
     })
   );
-
-  if (!process.env.NO_SERVE) {
-    app.use(
-      "/image",
-      serve(path.resolve(process.env.UPLOADS_PATH as string), {
-        maxAge: process.env.NODE_ENV === "production" ? "1y" : undefined,
-      })
-    );
-  }
 }

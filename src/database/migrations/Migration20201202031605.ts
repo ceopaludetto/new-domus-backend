@@ -17,6 +17,7 @@ export class Migration20201202031605 extends Migration {
           t.string("email").notNullable();
           t.string("cpf", 11).notNullable();
           t.string("color", 7).notNullable();
+          t.specificType("phones", "varchar[]").notNullable();
           t.date("birthdate").notNullable();
           t.enum("gender", [Gender.F, Gender.M, Gender.N]).notNullable();
         })

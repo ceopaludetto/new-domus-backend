@@ -7,7 +7,7 @@ const measure = process.argv.some((arg) => arg === "--measure");
 const smp = new SpeedMeasureWebpackPlugin({ disable: !measure });
 
 module.exports = {
-  options: { verbose: false, enableReactRefresh: false, buildType: "serveronly" },
+  options: { verbose: false, enableReactRefresh: false, buildType: "serveronly", disableWebpackbar: true },
   plugins: [
     {
       name: "typescript",

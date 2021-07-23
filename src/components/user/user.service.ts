@@ -3,7 +3,7 @@ import { InjectRepository } from "@mikro-orm/nestjs";
 import { Injectable } from "@nestjs/common";
 import { UserInputError } from "apollo-server-express";
 
-import { User, Phone } from "@/models";
+import { User } from "@/models";
 import type { Mapped, ShowAllWithSort } from "@/utils/common.dto";
 
 import type { UserInsertInput, UserUpdateInput } from "./user.dto";
@@ -72,22 +72,7 @@ export class UserService {
     user.person.name = person?.name ?? user.person.name;
     user.person.lastName = person?.lastName ?? user.person.lastName;
     user.person.birthdate = person?.birthdate ?? user.person.birthdate;
-
-    if (person?.phones) {
-      const phones = person?.phones?.map((p) => {
-        const phone = new Phone();
-
-        if (p.ddd && p.number) {
-          phone.ddd = p.ddd;
-          phone.number = p.number;
-          phone.person = user.person;
-        }
-
-        return phone;
-      });
-
-      user.person.phones.set(phones);
-    }
+    user.person.phones = person?.phones ?? user.person.phones;
 
     await this.flush(user);
 
