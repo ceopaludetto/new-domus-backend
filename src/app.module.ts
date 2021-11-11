@@ -5,28 +5,15 @@ import { PugAdapter } from "@nestjs-modules/mailer/dist/adapters/pug.adapter";
 import { Module, NestModule, MiddlewareConsumer } from "@nestjs/common";
 import { ConfigModule, ConfigService } from "@nestjs/config";
 import { GraphQLModule } from "@nestjs/graphql";
-import { ServeStaticModule } from "@nestjs/serve-static";
-import { GraphQLUpload, graphqlUploadExpress } from "graphql-upload";
+import { graphqlUploadExpress } from "graphql-upload";
 import { LoggerModule, PinoLogger } from "nestjs-pino";
 import path from "path";
 
-import {
-  AuthenticationModule,
-  CondominiumModule,
-  PersonModule,
-  QueueModule,
-  StateModule,
-  CityModule,
-  UserModule,
-  BlockModule,
-  UploadModule,
-  ImageModule,
-  LocalModule,
-} from "@/components";
-import * as entities from "@/models";
-import type { ContextType } from "@/utils/common.dto";
+import * as models from "@/models";
 import { APP_NAME } from "@/utils/constants";
-import { validate } from "@/utils/validations/configuration";
+import type { ContextType } from "@/utils/types";
+
+import { AuthenticationModule, UserModule } from "./components";
 
 @Module({
   imports: [
@@ -48,8 +35,7 @@ import { validate } from "@/utils/validations/configuration";
     }),
     ConfigModule.forRoot({
       isGlobal: true,
-      envFilePath: `.env.${process.env.NODE_ENV ?? "development"}`,
-      validate,
+      envFilePath: path.resolve(".env"),
     }),
     MikroOrmModule.forRootAsync({
       inject: [ConfigService, PinoLogger],
@@ -62,8 +48,8 @@ import { validate } from "@/utils/validations/configuration";
         password: configService.get("DATABASE_PASSWORD"),
         namingStrategy: EntityCaseNamingStrategy,
         debug: configService.get("DATABASE_LOGGER") && ["query", "query-params"],
-        entities: Object.values(entities).filter((x) => typeof x === "function") as any,
-        discovery: { disableDynamicFileAccess: true }, // due to webpack usage
+        entities: Object.values(models),
+        discovery: { disableDynamicFileAccess: true },
         tsNode: false,
         logger: (msg: string) => logger.debug(msg),
       }),
@@ -98,29 +84,11 @@ import { validate } from "@/utils/validations/configuration";
         introspection: process.env.NODE_ENV === "development",
         cors: false,
         uploads: false,
-        resolvers: { Upload: GraphQLUpload },
         context: ({ req, res }: ContextType) => ({ req, res }),
       }),
     }),
-    ServeStaticModule.forRootAsync({
-      inject: [ConfigService],
-      useFactory: async (configService: ConfigService) => [
-        {
-          rootPath: path.resolve(configService.get<string>("UPLOADS_PATH", "/uploads")),
-        },
-      ],
-    }),
-    QueueModule,
     UserModule,
-    PersonModule,
     AuthenticationModule,
-    CondominiumModule,
-    StateModule,
-    CityModule,
-    BlockModule,
-    UploadModule,
-    ImageModule,
-    LocalModule,
   ],
 })
 export class ApplicationModule implements NestModule {

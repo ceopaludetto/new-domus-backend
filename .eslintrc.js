@@ -17,6 +17,7 @@ const rules = {
       alphabetize: { order: "asc", ignoreCase: true },
     },
   ],
+  "import/extensions": "off",
 };
 
 module.exports = {

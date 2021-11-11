@@ -2,7 +2,7 @@ version: "2"
 
 services:
   postgres:
-    image: postgres
+    image: postgres:alpine
     restart: unless-stopped
     ports:
       - 5432:5432
@@ -11,36 +11,9 @@ services:
     environment:
       POSTGRES_PASSWORD: docker
       POSTGRES_USER: docker
+      POSTGRES_DB: graphql
     volumes:
       - pgdata:/var/lib/postgresql/data
-
-  redis:
-    image: redis:alpine
-    restart: unless-stopped
-    networks:
-      - internal
-    ports:
-      - 6379:6379
-
-  adminer:
-    image: adminer
-    restart: unless-stopped
-    depends_on:
-      - postgres
-    networks:
-      - internal
-    ports:
-      - 9999:8080
-
-  localstack:
-    image: localstack/localstack
-    ports:
-      - "4566-4583:4566-4583"
-    environment:
-      SERVICES: s3
-      DATA_DIR: /tmp/localstack/data
-    volumes:
-      - "./tmp:/tmp/localstack"
 
 volumes:
   pgdata:

@@ -2,7 +2,7 @@
   "compilerOptions": {
     "target": "ESNext",
     "module": "CommonJS",
-    "lib": ["ESNext", "DOM", "DOM.Iterable"],
+    "lib": ["ESNext"],
     "moduleResolution": "Node",
     "esModuleInterop": true,
     "emitDecoratorMetadata": true,

@@ -2,9 +2,8 @@ import { NestFactory } from "@nestjs/core";
 import type { NestExpressApplication } from "@nestjs/platform-express";
 import { useContainer as installClassValidationContainer } from "class-validator";
 import { Logger } from "nestjs-pino";
-import "@/utils/patch";
 
-import { installMiddlewares } from "@/utils/middlewares";
+import { installMiddlewares } from "@/middlewares";
 
 import { ApplicationModule } from "./app.module";
 
@@ -22,7 +21,7 @@ async function bootstrap() {
   const port = process.env.PORT || 3333;
   await app.listen(port);
 
-  logger.log(`Application listen in port ${port}`);
+  logger.log(`Application listen in ${await app.getUrl()}`);
 
   if (module.hot) {
     module.hot.accept();

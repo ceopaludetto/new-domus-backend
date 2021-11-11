@@ -1,29 +1,20 @@
-import { Entity, Property, OneToOne } from "@mikro-orm/core";
-import { ObjectType, Field } from "@nestjs/graphql";
-import { compare } from "bcryptjs";
+import { Entity, Property } from "@mikro-orm/core";
+import { Field, ObjectType } from "@nestjs/graphql";
+import bcrypt from "bcryptjs";
 
-import { USER } from "../utils/constants";
 import { BaseModel } from "./base.model";
-import { Person } from "./person.model";
 
-@ObjectType(USER)
-@Entity({ tableName: USER })
+@Entity({ tableName: "User" })
+@ObjectType("User")
 export class User extends BaseModel {
-  @Field()
   @Property({ unique: true })
-  public login!: string;
+  @Field()
+  public email!: string;
 
   @Property({ hidden: true })
   public password!: string;
 
-  @Property({ hidden: true })
-  public recoverToken!: string;
-
-  @Field(() => Person)
-  @OneToOne({ entity: () => Person, inversedBy: (person) => person.user })
-  public person!: Person;
-
-  public async comparePasswords(password: string) {
-    return compare(password, this.password);
+  public async comparePassword(password: string) {
+    return bcrypt.compare(password, this.password);
   }
 }

@@ -1,35 +1,30 @@
-import { InputType, Field, OmitType } from "@nestjs/graphql";
-import { IsString, IsUrl, IsOptional } from "class-validator";
-
-import * as Messages from "@/utils/validations/messages";
+import { Field, InputType } from "@nestjs/graphql";
+import { IsEmail, IsNotEmpty, IsString } from "class-validator";
 
 @InputType()
-export class AuthenticationInput {
+export class AddUserInput {
+  @IsEmail()
+  @IsString()
+  @IsNotEmpty()
   @Field()
-  @IsString({ message: Messages.STRING })
-  public login!: string;
+  public email!: string;
 
+  @IsString()
+  @IsNotEmpty()
   @Field()
-  @IsString({ message: Messages.STRING })
   public password!: string;
 }
 
 @InputType()
-export class ChangePasswordInput {
+export class AuthenticateUserInput {
+  @IsEmail()
+  @IsString()
+  @IsNotEmpty()
   @Field()
-  @IsString({ message: Messages.STRING })
-  public currentPassword!: string;
+  public email!: string;
 
+  @IsString()
+  @IsNotEmpty()
   @Field()
-  @IsString({ message: Messages.STRING })
-  public newPassword!: string;
-}
-
-@InputType()
-export class ForgotInput extends OmitType(AuthenticationInput, ["password"]) {
-  @Field()
-  @IsOptional()
-  @IsString({ message: Messages.STRING })
-  @IsUrl({ require_protocol: true, require_tld: process.env.NODE_ENV === "production" })
-  public callback!: string;
+  public password!: string;
 }

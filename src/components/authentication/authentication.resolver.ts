@@ -1,66 +1,21 @@
-import { UseGuards } from "@nestjs/common";
-import { Resolver, Mutation, Query, Args, Context } from "@nestjs/graphql";
+import { Args, Mutation, Resolver } from "@nestjs/graphql";
 
-import { UserInsertInput, UserService } from "@/components/user";
 import { User } from "@/models";
-import { ContextType } from "@/utils/common.dto";
-import type { Mapped } from "@/utils/common.dto";
-import { REFRESH_TOKEN } from "@/utils/constants";
-import { MapFields } from "@/utils/plugins";
 
-import { AuthenticationInput, ForgotInput, ChangePasswordInput } from "./authentication.dto";
-import { GqlAuthGuard } from "./authentication.guard";
+import { AddUserInput, AuthenticateUserInput } from "./authentication.dto";
 import { AuthenticationService } from "./authentication.service";
 
 @Resolver(() => User)
 export class AuthenticationResolver {
-  public constructor(private readonly authService: AuthenticationService, private readonly userService: UserService) {}
+  public constructor(private readonly authenticationService: AuthenticationService) {}
 
   @Mutation(() => User)
-  public async login(
-    @Args("input") data: AuthenticationInput,
-    @Context() ctx: ContextType,
-    @MapFields() mapped?: Mapped<User>
-  ) {
-    return this.authService.login(data, ctx.res, mapped);
+  public async login(@Args("input") data: AuthenticateUserInput) {
+    return this.authenticationService.login(data);
   }
 
   @Mutation(() => User)
-  public async register(@Args("input") data: UserInsertInput, @Context() ctx: ContextType) {
-    return this.authService.register(data, ctx.res);
-  }
-
-  @Mutation(() => String)
-  public async forgot(@Args("input") data: ForgotInput) {
-    return this.authService.forgot(data);
-  }
-
-  @UseGuards(GqlAuthGuard)
-  @Mutation(() => User)
-  public async changePassword(
-    @Args("input") data: ChangePasswordInput,
-    @Context() ctx: ContextType,
-    @MapFields() mapped?: Mapped<User>
-  ) {
-    return this.authService.changePassword(ctx.req.user, data, ctx.res, mapped);
-  }
-
-  @UseGuards(GqlAuthGuard)
-  @Query(() => User)
-  public async profile(@Context() ctx: ContextType, @MapFields() mapped?: Mapped<User>) {
-    return this.userService.populate(ctx.req.user, mapped);
-  }
-
-  @UseGuards(GqlAuthGuard)
-  @Mutation(() => Boolean)
-  public async evictRefreshCookie(@Context() ctx: ContextType) {
-    ctx.res.cookie(REFRESH_TOKEN, "", {
-      sameSite: "none",
-      httpOnly: true,
-      secure: true,
-      maxAge: 0,
-    });
-
-    return true;
+  public async register(@Args("input") data: AddUserInput) {
+    return this.authenticationService.register(data);
   }
 }
