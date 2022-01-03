@@ -9,10 +9,13 @@ export class Migration20211103215333 extends Migration {
     const knex = this.getKnex();
 
     const query = knex.schema
-      .createTable("User", (table) => {
+      .createTable("Person", (table) => {
         base(knex, table);
-        table.string("email").unique().notNullable();
-        table.string("password").notNullable();
+        table.string("firstName").notNullable();
+        table.string("lastName").notNullable();
+        table.date("birthDate").notNullable();
+        table.string("cpf", 11).notNullable();
+        table.string("phone").nullable();
       })
       .toQuery();
 
@@ -21,7 +24,7 @@ export class Migration20211103215333 extends Migration {
 
   public async down(): Promise<void> {
     const knex = this.getKnex();
-    const query = knex.schema.dropTable("User").toQuery();
+    const query = knex.schema.dropTable("Person").toQuery();
 
     this.addSql(query);
     this.addSql('DROP EXTENSION IF EXISTS "uuid-ossp";');

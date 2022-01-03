@@ -10,7 +10,6 @@ import { ApplicationModule } from "./app.module";
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(ApplicationModule, {
     bufferLogs: true,
-    autoFlushLogs: true,
   });
   const logger = app.get(Logger);
   app.useLogger(logger);
@@ -18,7 +17,7 @@ async function bootstrap() {
   installClassValidationContainer(app.select(ApplicationModule), { fallbackOnErrors: true });
   installMiddlewares(app);
 
-  const port = process.env.PORT || 3333;
+  const port = process.env.PORT ?? 3333;
   await app.listen(port);
 
   logger.log(`Application listen in ${await app.getUrl()}`);

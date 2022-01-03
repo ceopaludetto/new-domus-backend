@@ -1,4 +1,4 @@
-import { ArgsType, Field, Int, ObjectType } from "@nestjs/graphql";
+import { ArgsType, Field, ID, Int, ObjectType } from "@nestjs/graphql";
 import { IsInt, IsNotEmpty, IsNumber, IsOptional, IsString, IsUUID } from "class-validator";
 import * as Relay from "graphql-relay";
 
@@ -60,6 +60,6 @@ export class FindOne {
   @IsString()
   @IsUUID("4")
   @IsNotEmpty()
-  @Field()
+  @Field(() => ID)
   public id!: string;
 }

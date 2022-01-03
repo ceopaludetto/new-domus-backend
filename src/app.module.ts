@@ -13,7 +13,7 @@ import * as models from "@/models";
 import { APP_NAME } from "@/utils/constants";
 import type { ContextType } from "@/utils/types";
 
-import { AuthenticationModule, UserModule } from "./components";
+import { AuthenticationModule, CondominiumModule, PersonModule, UserModule } from "./components";
 
 @Module({
   imports: [
@@ -23,12 +23,17 @@ import { AuthenticationModule, UserModule } from "./components";
         messageKey: "message",
         autoLogging: process.env.NODE_ENV === "production",
         level: process.env.NODE_ENV !== "production" ? "debug" : "info",
-        prettyPrint:
-          process.env.NODE_ENV !== "production"
+        transport:
+          process.env.NODE_ENV === "development"
             ? {
-                translateTime: "dd/mm/yyyy, hh:MM:ss:l",
-                ignore: "context,pid,req",
-                levelFirst: true,
+                target: "pino-pretty",
+                options: {
+                  translateTime: "dd/mm/yyyy, hh:MM:ss:l",
+                  ignore: "context,pid,req",
+                  levelFirst: true,
+                  singleLine: true,
+                  messageKey: "message",
+                },
               }
             : undefined,
       },
@@ -88,6 +93,8 @@ import { AuthenticationModule, UserModule } from "./components";
       }),
     }),
     UserModule,
+    PersonModule,
+    CondominiumModule,
     AuthenticationModule,
   ],
 })

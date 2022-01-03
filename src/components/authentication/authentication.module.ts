@@ -1,4 +1,4 @@
-import { Module } from "@nestjs/common";
+import { Global, Module } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { JwtModule } from "@nestjs/jwt";
 import { PassportModule } from "@nestjs/passport";
@@ -8,6 +8,7 @@ import { AuthenticationResolver } from "./authentication.resolver";
 import { AuthenticationService } from "./authentication.service";
 import { JwtStrategy } from "./jwt.strategy";
 
+@Global()
 @Module({
   imports: [
     UserModule,
@@ -16,7 +17,7 @@ import { JwtStrategy } from "./jwt.strategy";
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => ({
         secret: configService.get("AUTH_SECRET"),
-        signOptions: { expiresIn: "1h" },
+        signOptions: { expiresIn: "15m" },
       }),
     }),
   ],

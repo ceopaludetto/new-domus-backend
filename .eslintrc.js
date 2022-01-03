@@ -8,6 +8,7 @@ const rules = {
   // Allow for of
   "no-restricted-syntax": "off",
   // Import ordering and allow no default
+  "import/no-import-module-exports": "off",
   "import/prefer-default-export": "off",
   "import-helpers/order-imports": [
     "warn",
@@ -38,7 +39,7 @@ module.exports = {
         node: true,
         jest: true,
       },
-      extends: ["airbnb-typescript/base", "plugin:@typescript-eslint/recommended", "prettier"],
+      extends: ["airbnb-base", "airbnb-typescript/base", "prettier"],
       plugins: ["@typescript-eslint", "import-helpers", "prettier"],
       parserOptions: {
         ecmaVersion: 2020,

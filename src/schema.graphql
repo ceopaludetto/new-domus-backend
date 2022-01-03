@@ -2,11 +2,25 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
-type User {
-  id: String!
+type PageInfo {
+  hasNextPage: Boolean!
+  hasPreviousPage: Boolean!
+  startCursor: String
+  endCursor: String
+}
+
+type Person {
+  id: ID!
   createdAt: DateTime!
   updatedAt: DateTime!
-  email: String!
+  firstName: String!
+  lastName: String!
+  fullName: String!
+  cpf: String!
+  birthDate: String!
+  phone: String
+  user: User!
+  condominiums: [Condominium!]!
 }
 
 """
@@ -14,11 +28,32 @@ A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date
 """
 scalar DateTime
 
-type PageInfo {
-  hasNextPage: Boolean!
-  hasPreviousPage: Boolean!
-  startCursor: String
-  endCursor: String
+type User {
+  id: ID!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  email: String!
+  person: Person!
+}
+
+type Condominium {
+  id: ID!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  name: String!
+  character: String!
+  cnpj: String!
+  people: [Person!]!
+}
+
+type CondominiumEdge {
+  cursor: String!
+  node: Condominium!
+}
+
+type CondominiumConnection {
+  edges: [CondominiumEdge!]!
+  pageInfo: PageInfo!
 }
 
 type UserEdge {
@@ -33,12 +68,16 @@ type UserConnection {
 
 type Query {
   users(after: String, before: String, first: Int, last: Int): UserConnection!
-  user(id: String!): User!
+  user(id: ID!): User!
+  condominiums(after: String, before: String, first: Int, last: Int): CondominiumConnection!
+  condominium(id: ID!): Condominium!
+  profile: User!
 }
 
 type Mutation {
   login(input: AuthenticateUserInput!): User!
   register(input: AddUserInput!): User!
+  evictRefresh: Boolean!
 }
 
 input AuthenticateUserInput {
@@ -49,4 +88,20 @@ input AuthenticateUserInput {
 input AddUserInput {
   email: String!
   password: String!
+  person: AddPersonInput
+}
+
+input AddPersonInput {
+  firstName: String!
+  lastName: String!
+  cpf: String!
+  birthDate: DateTime!
+  phone: String!
+  condominiums: [AddCondominium!]
+}
+
+input AddCondominium {
+  name: String!
+  cnpj: String!
+  character: String = "#"
 }

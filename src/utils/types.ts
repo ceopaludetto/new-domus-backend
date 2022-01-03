@@ -1,3 +1,4 @@
+import type { FindOptions } from "@mikro-orm/core";
 import type { Request, Response } from "express";
 
 export interface ContextType {
@@ -8,3 +9,5 @@ export interface ContextType {
 export interface TokenPayload {
   id: string;
 }
+
+export type Mapped<T> = FindOptions<T>["populate"];

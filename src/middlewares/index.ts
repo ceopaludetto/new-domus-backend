@@ -2,6 +2,8 @@ import { INestApplication, ValidationPipe } from "@nestjs/common";
 import cookie from "cookie-parser";
 import helmet from "helmet";
 
+import { ToPlainPipe } from "@/utils/plugins/pipes";
+
 export function installMiddlewares(app: INestApplication) {
   app.useGlobalPipes(
     new ValidationPipe({
@@ -9,15 +11,16 @@ export function installMiddlewares(app: INestApplication) {
       transformOptions: {
         enableImplicitConversion: true,
       },
-    })
+    }),
+    new ToPlainPipe()
   );
 
   app.use(cookie());
   app.enableCors({
     origin: true,
     credentials: true,
-    allowedHeaders: ["Content-Type", "X-Access-Token", "X-Condominium", "Origin"],
-    exposedHeaders: ["X-Access-Token"],
+    exposedHeaders: ["AccessToken"],
+    allowedHeaders: ["Condominium", "Authorization", "Content-Type", "Origin"],
   });
 
   app.use(

@@ -1,11 +1,11 @@
 import { Entity, PrimaryKey, Property } from "@mikro-orm/core";
-import { Field, ObjectType } from "@nestjs/graphql";
+import { Field, ID, ObjectType } from "@nestjs/graphql";
 
 @Entity({ abstract: true })
 @ObjectType({ isAbstract: true })
 export abstract class BaseModel {
   @PrimaryKey({ type: "uuid", defaultRaw: "uuid_generate_v4()" })
-  @Field({ nullable: false })
+  @Field(() => ID, { nullable: false })
   public id!: string;
 
   @Property({ onCreate: () => new Date() })
